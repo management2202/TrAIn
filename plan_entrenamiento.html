@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de Entrenamiento y Nutrición</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container input,
+        .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .result-container {
+            background-color: white;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container {
+            margin-top: 30px;
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Plan de Entrenamiento y Nutrición</h1>
+        <div class="form-container">
+            <h2>Ingresar Datos</h2>
+            <form id="userForm">
+                <label for="peso">Peso (kg):</label>
+                <input type="number" id="peso" required>
+
+                <label for="altura">Altura (cm):</label>
+                <input type="number" id="altura" required>
+
+                <label for="edad">Edad:</label>
+                <input type="number" id="edad" required>
+
+                <label for="porcentajeGrasa">Porcentaje de grasa corporal (%):</label>
+                <input type="number" id="porcentajeGrasa" required>
+
+                <label for="grupoEjercicio">Grupo Muscular:</label>
+                <select id="grupoEjercicio">
+                    <option value="Piernas">Piernas</option>
+                    <option value="Pecho">Pecho</option>
+                    <option value="Cardio">Cardio</option>
+                </select>
+
+                <button type="submit">Generar Plan</button>
+            </form>
+        </div>
+
+        <div class="result-container" id="resultContainer" style="display:none;">
+            <h3>Resultado del Plan</h3>
+            <p id="objetivo"></p>
+            <p id="calorias"></p>
+            <p id="proteina"></p>
+            <p id="carbohidratos"></p>
+            <p id="grasas"></p>
+            <p id="comidaSugerida"></p>
+            <p id="rutinaSugerida"></p>
+        </div>
+
+        <div class="chart-container" id="chartContainer" style="display:none;">
+            <canvas id="progressChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.getElementById("userForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var peso = parseFloat(document.getElementById("peso").value);
+            var altura = parseFloat(document.getElementById("altura").value);
+            var edad = parseInt(document.getElementById("edad").value);
+            var porcentajeGrasa = parseFloat(document.getElementById("porcentajeGrasa").value);
+            var grupoEjercicio = document.getElementById("grupoEjercicio").value;
+
+            var objetivo, calorias, proteina, carbohidratos, grasas, comidaSugerida, rutinaSugerida;
+
+            // Calcular el objetivo
+            if (porcentajeGrasa <= 15) {
+                objetivo = "Ganancia muscular";
+            } else {
+                objetivo = "Pérdida de grasa";
+            }
+
+            // Calcular el plan de nutrición
+            if (objetivo === "Ganancia muscular") {
+                calorias = peso * 30;
+                proteina = peso * 2;
+                carbohidratos = peso * 5;
+                grasas = peso * 0.8;
+                comidaSugerida = "Comida sugerida: Pollo a la plancha con arroz y verduras.";
+                rutinaSugerida = "Rutina sugerida: Día A (Piernas, espalda, hombros)";
+            } else {
+                calorias = peso * 20;
+                proteina = peso * 2;
+                carbohidratos = peso * 3;
+                grasas = peso * 0.6;
+                comidaSugerida = "Comida sugerida: Ensalada de atún con aguacate.";
+                rutinaSugerida = "Rutina sugerida: Día B (Pecho, bíceps, tríceps)";
+            }
+
+            // Mostrar los resultados
+            document.getElementById("resultContainer").style.display = "block";
+            document.getElementById("objetivo").textContent = "Objetivo: " + objetivo;
+            document.getElementById("calorias").textContent = "Calorías: " + calorias;
+            document.getElementById("proteina").textContent = "Proteína: " + proteina + "g";
+            document.getElementById("carbohidratos").textContent = "Carbohidratos: " + carbohidratos + "g";
+            document.getElementById("grasas").textContent = "Grasas: " + grasas + "g";
+            document.getElementById("comidaSugerida").textContent = comidaSugerida;
+            document.getElementById("rutinaSugerida").textContent = rutinaSugerida;
+
+            // Mostrar gráficos de progreso
+            var ctx = document.getElementById("progressChart").getContext("2d");
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Calorías', 'Proteína', 'Carbohidratos', 'Grasas'],
+                    datasets: [{
+                        label: 'Recomendaciones Nutricionales',
+                        data: [calorias, proteina, carbohidratos, grasas],
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            document.getElementById("chartContainer").style.display = "block";
+        });
+    </script>
+</body>
+</html>
